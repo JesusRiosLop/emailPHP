@@ -11,18 +11,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout del repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2️⃣ Setup PHP 8.3 con Composer
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.3'
           tools: composer
-          coverage: none
 
+      # 3️⃣ Generar composer.lock si no existe
+      - name: Ensure composer.lock exists
+        run: |
+          if [ ! -f composer.lock ]; then
+            composer update --no-interaction --prefer-dist
+          fi
+
+      # 4️⃣ Instalar dependencias desde lock
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      # 5️⃣ Ejecutar tests
       - name: Run tests
-        run: vendor/bin/phpunit tests
+        run: vendor/bin/phpunit
