@@ -1,20 +1,28 @@
 name: Test PHP
+
 on:
-    push:
-        branches: 
-            - main
-    workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 jobs:
-    test:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
+  test:
+    runs-on: ubuntu-latest
 
-            - name: Set up composer
-              uses: php-actions/composer@v6
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name : Install dependencies
-              run: composer update
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer
+          coverage: none
 
-            - name: Run tests
-              run: vendor/bin/phpunit tests
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run tests
+        run: vendor/bin/phpunit tests
